@@ -1,0 +1,28 @@
+{
+  "data":[
+     {
+        "id":"posX",
+        "image":"colors_posX.jpg"
+     },
+     {
+        "id":"negX",
+        "image":"colors_negX.jpg"
+     },
+     {
+        "id":"posY",
+        "image":"colors_posY.jpg"
+     },
+     {
+        "id":"negY",
+        "image":"colors_negY.jpg"
+     },
+     {
+        "id":"posZ",
+        "image":"colors_posZ.jpg"
+     },
+     {
+        "id":"negZ",
+        "image":"colors_negZ.jpg"
+     }
+  ]
+}
