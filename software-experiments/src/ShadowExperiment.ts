@@ -53,6 +53,7 @@ import {Max3DSParser}														from "awayjs-full/lib/parsers";
 import {PrimitiveTorusPrefab,
 	PrimitiveSpherePrefab,
 	PrimitiveCubePrefab}													from "awayjs-full/lib/prefabs";
+import {DefaultMaterialManager}												from "awayjs-full/lib/managers";
 
 class ShadowExperiment
 {
@@ -63,6 +64,7 @@ class ShadowExperiment
 	//material objects
 	private _groundMaterial:MethodMaterial;
 	private _objectMaterial:MethodMaterial;
+	private _shadowMapMaterial:MethodMaterial;
 
 	//light objects
 	private _light:DirectionalLight;
@@ -71,8 +73,8 @@ class ShadowExperiment
 
 	//scene objects
 	private _object:Sprite;
-	private _plane:PrimitivePlanePrefab;
 	private _ground:Sprite;
+	private _shadowMap:Sprite;
 
 	//navigation variables
 	private _timer:RequestAnimationFrame;
@@ -83,10 +85,10 @@ class ShadowExperiment
 	private _lastMouseX:number;
 	private _lastMouseY:number;
 
-	private _useSoftware = true;
+	private _useSoftware = false;
 	private _useShadows = true;
-	private _shadowSamples = 2;
-	private _shadowRange = 5;
+	private _shadowSamples = 6; // num hard shadows
+	private _shadowRange = 50; // distribution of shadows
 
 	/**
 	 * Constructor
@@ -125,10 +127,10 @@ class ShadowExperiment
 		this._view.backgroundColor = 0x666666;
 
 		//setup the camera for optimal shadow rendering
-		this._view.camera.projection.far = 2100;
+		this._view.camera.projection.far = 3500;
 
 		//setup controller to be used on the camera
-		this._cameraController = new HoverController(this._view.camera, null, 45, 20, 700, 10);
+		this._cameraController = new HoverController(this._view.camera, null, 0, 20, 1250,-10);
 	}
 
 	/**
@@ -173,6 +175,13 @@ class ShadowExperiment
 		this._groundMaterial.lightPicker = this._lightPicker;
 		this._groundMaterial.specularMethod.strength = 0;
 		//this._groundMaterial.mipmap = false;
+
+		// SHADOW MAP MATERIAL
+		this._shadowMapMaterial = new MethodMaterial(0x00FF00);
+		if (this._useShadows) {
+			this._shadowMapMaterial.ambientMethod.texture = this._light.shadowMapper.depthMap;
+			// this._shadowMapMaterial.ambientMethod.texture = DefaultMaterialManager.getDefaultTexture();
+		}
 	}
 
 	/**
@@ -180,6 +189,7 @@ class ShadowExperiment
 	 */
 	private initObjects():void
 	{
+		// Shadow casting object
 		var size = 150;
 		// this._object = <Sprite> new PrimitiveTorusPrefab(this._objectMaterial, ElementsType.TRIANGLE, size, 50, 40, 20).getNewObject();
 		this._object = <Sprite> new PrimitiveSpherePrefab(this._objectMaterial, ElementsType.TRIANGLE, size, 16, 12).getNewObject();
@@ -188,10 +198,20 @@ class ShadowExperiment
 		this._object.y = 200;
 		this._view.scene.addChild(this._object);
 
-		this._plane = new PrimitivePlanePrefab(this._groundMaterial, ElementsType.TRIANGLE, 1000, 1000, 1, 1);
-		this._ground = <Sprite> this._plane.getNewObject();
+		// Ground
+		var floorPlane = new PrimitivePlanePrefab(this._groundMaterial, ElementsType.TRIANGLE, 1000, 1000, 1, 1);
+		this._ground = <Sprite> floorPlane.getNewObject();
 		this._ground.castsShadows = false;
 		this._view.scene.addChild(this._ground);
+
+		// Shadow map plane
+		var shadowPlane = new PrimitivePlanePrefab(this._shadowMapMaterial, ElementsType.TRIANGLE, 1000, 1000, 1, 1);
+		this._shadowMap = <Sprite> shadowPlane.getNewObject();
+		this._shadowMap.castsShadows = false;
+		this._shadowMap.z = -500;
+		this._shadowMap.y = 500;
+		this._shadowMap.rotationX = 90;
+		this._view.scene.addChild(this._shadowMap);
 	}
 
 	/**
