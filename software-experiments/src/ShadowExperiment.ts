@@ -83,8 +83,10 @@ class ShadowExperiment
 	private _lastMouseX:number;
 	private _lastMouseY:number;
 
-	private _useSoftware = false;
+	private _useSoftware = true;
 	private _useShadows = true;
+	private _shadowSamples = 2;
+	private _shadowRange = 5;
 
 	/**
 	 * Constructor
@@ -120,7 +122,7 @@ class ShadowExperiment
 		}
 
 		this._view = new View(renderer);
-		this._view.backgroundColor = 0xCCCCCC;
+		this._view.backgroundColor = 0x666666;
 
 		//setup the camera for optimal shadow rendering
 		this._view.camera.projection.far = 2100;
@@ -149,7 +151,7 @@ class ShadowExperiment
 		// OBJECT MATERIAL
 		this._objectMaterial = new MethodMaterial(0xFFFFFF, 1);
 		if (this._useShadows) { // if commented out, ant is completely black, but still projects shadow
-			this._objectMaterial.shadowMethod = new ShadowSoftMethod(this._light , 10 , 5 );
+			this._objectMaterial.shadowMethod = new ShadowSoftMethod(this._light , this._shadowSamples, this._shadowRange);
 			this._objectMaterial.shadowMethod.epsilon = 0.2;
 		}
 		this._objectMaterial.lightPicker = this._lightPicker;
@@ -160,10 +162,10 @@ class ShadowExperiment
 		this._objectMaterial.ambientMethod.strength = 1;
 
 		// GROUND MATERIAL
-		this._groundMaterial = new MethodMaterial(0xFF0000, 1);
+		this._groundMaterial = new MethodMaterial(0xFFFFFF, 1);
 		// this._groundMaterial.ambientMethod.texture = new Single2DTexture();
 		if (this._useShadows) { // if commented out, ground should not be visible
-			this._groundMaterial.shadowMethod = new ShadowSoftMethod(this._light , 10 , 5 );
+			this._groundMaterial.shadowMethod = new ShadowSoftMethod(this._light , this._shadowSamples, this._shadowRange);
 			this._groundMaterial.style.sampler = new Sampler2D(true, true, true);
 			this._groundMaterial.style.addSamplerAt(new Sampler2D(true, true), this._light.shadowMapper.depthMap);
 			this._groundMaterial.shadowMethod.epsilon = 0.2;
@@ -178,14 +180,15 @@ class ShadowExperiment
 	 */
 	private initObjects():void
 	{
-		// this._object = <Sprite> new PrimitiveTorusPrefab(this._objectMaterial, ElementsType.TRIANGLE, 150, 50, 40, 20).getNewObject();
-		this._object = <Sprite> new PrimitiveSpherePrefab(this._objectMaterial, ElementsType.TRIANGLE, 100, 16, 12).getNewObject();
-		// this._object = <Sprite> new PrimitiveCubePrefab(this._objectMaterial, ElementsType.TRIANGLE, 200, 200, 200, 1, 1).getNewObject();
+		var size = 150;
+		// this._object = <Sprite> new PrimitiveTorusPrefab(this._objectMaterial, ElementsType.TRIANGLE, size, 50, 40, 20).getNewObject();
+		this._object = <Sprite> new PrimitiveSpherePrefab(this._objectMaterial, ElementsType.TRIANGLE, size, 16, 12).getNewObject();
+		// this._object = <Sprite> new PrimitiveCubePrefab(this._objectMaterial, ElementsType.TRIANGLE, size, size, size, 1, 1).getNewObject();
 		// this._object.debugVisible = true;
 		this._object.y = 200;
 		this._view.scene.addChild(this._object);
 
-		this._plane = new PrimitivePlanePrefab(this._groundMaterial, ElementsType.TRIANGLE, 1000, 1000);
+		this._plane = new PrimitivePlanePrefab(this._groundMaterial, ElementsType.TRIANGLE, 1000, 1000, 1, 1);
 		this._ground = <Sprite> this._plane.getNewObject();
 		this._ground.castsShadows = false;
 		this._view.scene.addChild(this._ground);

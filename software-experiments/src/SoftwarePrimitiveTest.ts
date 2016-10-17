@@ -1,39 +1,13 @@
 import {Vector3D}															from "awayjs-full/lib/geom";
 import {Debug, RequestAnimationFrame}										from "awayjs-full/lib/utils";
 
-import {View, DefaultRenderer, MethodMaterial}								from "awayjs-full";
+import {View, DefaultRenderer, MethodMaterial, BasicMaterial}				from "awayjs-full";
 import {Sprite, DirectionalLight}											from "awayjs-full/lib/display";
 import {DefaultMaterialManager}												from "awayjs-full/lib/managers";
 import {StaticLightPicker}													from "awayjs-full/lib/materials";
 import {PrimitivePrefabBase, PrimitiveCapsulePrefab, PrimitiveConePrefab,
 	PrimitiveCubePrefab, PrimitiveCylinderPrefab, PrimitivePlanePrefab,
 	PrimitiveSpherePrefab, PrimitiveTorusPrefab}							from "awayjs-full/lib/prefabs";
-
-
-/*
-OLD Imports
-import {Vector3D}						from "awayjs-core/lib/geom/Vector3D";
-import {RequestAnimationFrame}		from "awayjs-core/lib/utils/RequestAnimationFrame";
-import {Debug}						from "awayjs-core/lib/utils/Debug";
-
-import {View}							from "awayjs-display/lib/View";
-import {Sprite}						from "awayjs-display/lib/display/Sprite";
-import {DirectionalLight}				from "awayjs-display/lib/display/DirectionalLight";
-import {DefaultMaterialManager}		from "awayjs-display/lib/managers/DefaultMaterialManager";
-import {StaticLightPicker}			from "awayjs-display/lib/materials/lightpickers/StaticLightPicker";
-import {PrimitivePrefabBase}			from "awayjs-display/lib/prefabs/PrimitivePrefabBase";
-import {PrimitiveCapsulePrefab}		from "awayjs-display/lib/prefabs/PrimitiveCapsulePrefab";
-import {PrimitiveConePrefab}			from "awayjs-display/lib/prefabs/PrimitiveConePrefab";
-import {PrimitiveCubePrefab}			from "awayjs-display/lib/prefabs/PrimitiveCubePrefab";
-import {PrimitiveCylinderPrefab}		from "awayjs-display/lib/prefabs/PrimitiveCylinderPrefab";
-import {PrimitivePlanePrefab}			from "awayjs-display/lib/prefabs/PrimitivePlanePrefab";
-import {PrimitiveSpherePrefab}		from "awayjs-display/lib/prefabs/PrimitiveSpherePrefab";
-import {PrimitiveTorusPrefab}			from "awayjs-display/lib/prefabs/PrimitiveTorusPrefab";
-
-import {DefaultRenderer}				from "awayjs-renderergl/lib/DefaultRenderer";
-
-import {MethodMaterial}				from "awayjs-methodmaterials/lib/MethodMaterial";
-*/
 
 class SoftwarePrimitivesTest
 {
@@ -53,8 +27,8 @@ class SoftwarePrimitivesTest
 		Debug.LOG_PI_ERRORS    = false;
 		Debug.THROW_ERRORS     = false;
 
-		var defaultRenderer:DefaultRenderer = new DefaultRenderer(null, false, "baseline", "software");
-		// var defaultRenderer:DefaultRenderer = new DefaultRenderer();
+		// var defaultRenderer:DefaultRenderer = new DefaultRenderer(null, false, "baseline", "software");
+		var defaultRenderer:DefaultRenderer = new DefaultRenderer();
 		defaultRenderer.antiAlias = 1;
 
 		this.view = new View(defaultRenderer);
@@ -95,15 +69,16 @@ class SoftwarePrimitivesTest
 	{
 
 		var primitives:Array<PrimitivePrefabBase> = new Array<PrimitivePrefabBase>();
+
 		var material:MethodMaterial = new MethodMaterial(DefaultMaterialManager.getDefaultImage2D());
 		material.lightPicker = this.staticLightPicker;
 
-		// primitives.push(new PrimitiveTorusPrefab());
-		// primitives.push(new PrimitiveSpherePrefab());
-		// primitives.push(new PrimitiveCapsulePrefab());
-		// primitives.push(new PrimitiveCylinderPrefab());
-		// primitives.push(new PrimitivePlanePrefab());
-		// primitives.push(new PrimitiveConePrefab());
+		primitives.push(new PrimitiveTorusPrefab());
+		primitives.push(new PrimitiveSpherePrefab());
+		primitives.push(new PrimitiveCapsulePrefab());
+		primitives.push(new PrimitiveCylinderPrefab());
+		primitives.push(new PrimitivePlanePrefab());
+		primitives.push(new PrimitiveConePrefab());
 		primitives.push(new PrimitiveCubePrefab());
 
 		var sprite:Sprite;
@@ -117,7 +92,7 @@ class SoftwarePrimitivesTest
 			sprite.x = Math.cos(t)*this.radius;
 			sprite.y = Math.sin(t)*this.radius;
 			sprite.z = 0;
-			sprite.transform.scaleTo(2, 2, 2);
+			// sprite.transform.scaleTo(2, 2, 2);
 
 			this.view.scene.addChild(sprite);
 			this.sprites.push(sprite);
@@ -128,9 +103,13 @@ class SoftwarePrimitivesTest
 
 	private render()
 	{
-		//if (this.sprites)
-		//    for (var c:number = 0; c < this.sprites.length; c++)
-		//        this.sprites[c].rotationY += 1;
+		if (this.sprites) {
+			for (var c:number = 0; c < this.sprites.length; c++) {
+				this.sprites[c].rotationX += 1;
+				this.sprites[c].rotationY += 2;
+				this.sprites[c].rotationZ += 3;
+			}
+		}
 
 		this.view.render();
 	}
