@@ -85,7 +85,7 @@ class ShadowExperiment
 	private _lastMouseX:number;
 	private _lastMouseY:number;
 
-	private _useSoftware = false;
+	private _useSoftware = true;
 	private _useShadows = true;
 	private _shadowSamples = 6; // num hard shadows
 	private _shadowRange = 50; // distribution of shadows
@@ -130,7 +130,7 @@ class ShadowExperiment
 		this._view.camera.projection.far = 3500;
 
 		//setup controller to be used on the camera
-		this._cameraController = new HoverController(this._view.camera, null, 0, 20, 1250,-10);
+		this._cameraController = new HoverController(this._view.camera, null, 0, 20, 1000,-10);
 	}
 
 	/**
@@ -177,7 +177,8 @@ class ShadowExperiment
 		//this._groundMaterial.mipmap = false;
 
 		// SHADOW MAP MATERIAL
-		this._shadowMapMaterial = new MethodMaterial(0x00FF00);
+		this._shadowMapMaterial = new MethodMaterial();
+		this._shadowMapMaterial.bothSides = true;
 		if (this._useShadows) {
 			this._shadowMapMaterial.ambientMethod.texture = this._light.shadowMapper.depthMap;
 			// this._shadowMapMaterial.ambientMethod.texture = DefaultMaterialManager.getDefaultTexture();
