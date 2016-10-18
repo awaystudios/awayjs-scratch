@@ -71,6 +71,8 @@ class Basic_SkyBox
 	private _cubeTextureName:string = "assets/skybox/colors_texture.cube";
 	private _cameraZ:number = 1000;
 
+	private _useSoftware = true;
+
 	/**
 	 * Constructor
 	 */
@@ -96,8 +98,13 @@ class Basic_SkyBox
 	private initEngine():void
 	{
 		//setup the view
-		// var renderer = new DefaultRenderer(null, false, "baseline", "software");
-		var renderer = new DefaultRenderer();
+		var renderer;
+		if (this._useSoftware) {
+			renderer = new DefaultRenderer(null, false, "baseline", "software");
+		}
+		else {
+			renderer = new DefaultRenderer();
+		}
 		this._view = new View(renderer);
 
 		//setup the camera
@@ -126,7 +133,7 @@ class Basic_SkyBox
 	 */
 	private initObjects():void
 	{
-		this._object = <Sprite> new PrimitiveTorusPrefab(this._objectMaterial, ElementsType.TRIANGLE, 250, 100, 40, 20).getNewObject();
+		this._object = <Sprite> new PrimitiveTorusPrefab(this._objectMaterial, ElementsType.TRIANGLE, 250, 100, 16, 8).getNewObject();
 		// this._object = <Sprite> new PrimitiveSpherePrefab(this._objectMaterial, ElementsType.TRIANGLE, 300, 40, 20).getNewObject();
 		// this._object = <Sprite> new PrimitiveCubePrefab(this._objectMaterial, ElementsType.TRIANGLE, 500, 500, 500, 1, 1).getNewObject();
 		this._object.debugVisible = true;
