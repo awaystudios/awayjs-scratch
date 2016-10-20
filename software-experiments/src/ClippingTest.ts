@@ -49,7 +49,7 @@ class ClippingTest
 		// var material:MethodMaterial = new MethodMaterial(DefaultMaterialManager.getDefaultImage2D());
 		var material:MethodMaterial = new MethodMaterial(0xFF0000);
 
-		this.plane = <Sprite> new PrimitivePlanePrefab(material, "triangle", 1000, 1000, 1, 1).getNewObject();
+		this.plane = <Sprite> new PrimitivePlanePrefab(material, "triangle", 500, 2000, 1, 1).getNewObject();
 		this.plane.x = 1000;
 		this.plane.rotationZ = 90;
 		this.plane.debugVisible = true;
@@ -58,7 +58,7 @@ class ClippingTest
 
 	private render()  {
 
-		this.plane.z = 1000 + 500 * Math.cos(this.zAnimate);
+		this.plane.z = 1000 + 1000 * Math.cos(this.zAnimate);
 		this.zAnimate += 0.01;
 
 		this.view.render();
