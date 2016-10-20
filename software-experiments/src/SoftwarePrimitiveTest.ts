@@ -27,8 +27,8 @@ class SoftwarePrimitivesTest
 		Debug.LOG_PI_ERRORS    = false;
 		Debug.THROW_ERRORS     = false;
 
-		// var defaultRenderer:DefaultRenderer = new DefaultRenderer(null, false, "baseline", "software");
-		var defaultRenderer:DefaultRenderer = new DefaultRenderer();
+		var defaultRenderer:DefaultRenderer = new DefaultRenderer(null, false, "baseline", "software");
+		// var defaultRenderer:DefaultRenderer = new DefaultRenderer();
 		defaultRenderer.antiAlias = 1;
 
 		this.view = new View(defaultRenderer);
