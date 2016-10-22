@@ -68,7 +68,7 @@ class Basic_SkyBox
 	private _timer:RequestAnimationFrame;
 	private _mouseX:number;
 	private _mouseY:number;
-	private _cubeTextureName:string = "assets/skybox/colors_texture.cube";
+	private _cubeTextureName:string = "assets/skybox/snow_texture.cube";
 	private _cameraZ:number = 1000;
 
 	private _useSoftware = true;
@@ -194,7 +194,7 @@ class Basic_SkyBox
 				this._skyBox = new Skybox(<BitmapImageCube> event.assets[0]);
 				this._view.scene.addChild(this._skyBox);
 
-				// this._objectMaterial.addEffectMethod(new EffectEnvMapMethod(this._cubeTexture));
+				this._objectMaterial.addEffectMethod(new EffectEnvMapMethod(this._cubeTexture));
 
 				break;
 		}
