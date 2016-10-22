@@ -7,7 +7,7 @@ import {DefaultMaterialManager}												from "awayjs-full/lib/managers";
 import {StaticLightPicker}													from "awayjs-full/lib/materials";
 import {PrimitivePrefabBase, PrimitiveCapsulePrefab, PrimitiveConePrefab,
 	PrimitiveCubePrefab, PrimitiveCylinderPrefab, PrimitivePlanePrefab,
-	PrimitiveSpherePrefab, PrimitiveTorusPrefab}							from "awayjs-full/lib/prefabs";
+	PrimitiveSpherePrefab, PrimitiveTorusPrefab, PrimitivePolygonPrefab}							from "awayjs-full/lib/prefabs";
 
 class ClippingTest
 {
@@ -31,7 +31,7 @@ class ClippingTest
 		this.view.camera.x = 0;
 		this.view.camera.y = 0;
 		this.view.camera.z = 0;
-		this.view.camera.projection.near = 135;
+		this.view.camera.projection.near = 250;
 		this.view.camera.projection.far = 1000000000000;
 
 		// Listeners.
@@ -46,19 +46,24 @@ class ClippingTest
 
 	private initScene():void  {
 
-		// var material:MethodMaterial = new MethodMaterial(DefaultMaterialManager.getDefaultImage2D());
-		var material:MethodMaterial = new MethodMaterial(0xFF0000);
+		var material:MethodMaterial = new MethodMaterial(DefaultMaterialManager.getDefaultImage2D());
+		// var material:MethodMaterial = new MethodMaterial(0xFF0000);
 
-		this.plane = <Sprite> new PrimitivePlanePrefab(material, "triangle", 500, 2000, 1, 1).getNewObject();
-		this.plane.x = 1000;
+		this.plane = <Sprite> new PrimitivePlanePrefab(material, "triangle", 500, 500, 1, 1).getNewObject();
+		// this.plane = <Sprite> new PrimitivePolygonPrefab(material, "triangle", 300, 4, true).getNewObject();
+		this.plane.rotationY = 45;
+		this.plane.z = 500;
+		this.plane.x = 500;
 		this.plane.rotationZ = 90;
-		this.plane.debugVisible = true;
+		// this.plane.debugVisible = true;
 		this.view.scene.addChild(this.plane);
 	}
 
 	private render()  {
 
-		this.plane.z = 1000 + 1000 * Math.cos(this.zAnimate);
+		this.plane.z = 600 + 500 * Math.cos(this.zAnimate);
+		this.plane.rotationZ = 90 + 45 * Math.cos(this.zAnimate);
+		this.plane.rotationX = 35 * Math.cos(this.zAnimate);
 		this.zAnimate += 0.01;
 
 		this.view.render();
