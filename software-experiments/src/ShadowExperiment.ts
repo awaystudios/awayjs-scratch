@@ -151,7 +151,7 @@ class ShadowExperiment
 	private initMaterials():void
 	{
 		// OBJECT MATERIAL
-		this._objectMaterial = new MethodMaterial(0xFFFFFF, 1);
+		this._objectMaterial = new MethodMaterial(DefaultMaterialManager.getDefaultImage2D());
 		if (this._useShadows) { // if commented out, ant is completely black, but still projects shadow
 			this._objectMaterial.shadowMethod = new ShadowSoftMethod(this._light , this._shadowSamples, this._shadowRange);
 			this._objectMaterial.shadowMethod.epsilon = 0.2;
@@ -196,7 +196,7 @@ class ShadowExperiment
 		this._object = <Sprite> new PrimitiveSpherePrefab(this._objectMaterial, ElementsType.TRIANGLE, size, 16, 12).getNewObject();
 		// this._object = <Sprite> new PrimitiveCubePrefab(this._objectMaterial, ElementsType.TRIANGLE, size, size, size, 1, 1).getNewObject();
 		// this._object.debugVisible = true;
-		this._object.y = 200;
+		this._object.y = 250;
 		this._view.scene.addChild(this._object);
 
 		// Ground
