@@ -35,21 +35,17 @@ THE SOFTWARE.
 
 */
 
-import {View, DefaultRenderer}		        								from "awayjs-full";
-import {BitmapImageCube, SamplerCube}										from "awayjs-full/lib/image";
-import {LoaderEvent}														from "awayjs-full/lib/events";
-import {Vector3D}															from "awayjs-full/lib/geom";
+import {View}		        								from "awayjs-full/lib/view";
+import {DefaultRenderer}		        								from "awayjs-full/lib/renderer";
+import {BitmapImageCube, SamplerCube}										from "awayjs-full/lib/graphics";
+import {LoaderEvent, Vector3D, AssetLibrary, LoaderContext, URLRequest, RequestAnimationFrame, PerspectiveProjection}														from "awayjs-full/lib/core";
 import {ElementsType}														from "awayjs-full/lib/graphics";
-import {AssetLibrary, LoaderContext}										from "awayjs-full/lib/library";
-import {URLRequest}															from "awayjs-full/lib/net";
-import {RequestAnimationFrame}												from "awayjs-full/lib/utils";
 import {Sprite, Skybox}														from "awayjs-full/lib/display";
-import {PerspectiveProjection}												from "awayjs-full/lib/projections";
 import {PrimitiveTorusPrefab,
 	PrimitiveSpherePrefab,
-	PrimitiveCubePrefab}												    from "awayjs-full/lib/prefabs";
+	PrimitiveCubePrefab}												    from "awayjs-full/lib/display";
 import {MethodMaterial, EffectEnvMapMethod}									from "awayjs-full/lib/materials";
-import {Single2DTexture, SingleCubeTexture}									from "awayjs-full/lib/textures";
+import {Single2DTexture, SingleCubeTexture}									from "awayjs-full/lib/graphics";
 
 class Basic_SkyBox
 {

@@ -36,24 +36,18 @@ THE SOFTWARE.
 
 */
 
-import {View, DefaultRenderer}		        								from "awayjs-full";
-import {BitmapImage2D, Sampler2D}											from "awayjs-full/lib/image";
-import {AssetEvent, LoaderEvent}											from "awayjs-full/lib/events";
-import {HoverController}													from "awayjs-full/lib/controllers";
-import {Vector3D}															from "awayjs-full/lib/geom";
-import {ElementsType}														from "awayjs-full/lib/graphics";
-import {AssetLibrary, IAsset, LoaderContext}								from "awayjs-full/lib/library";
-import {URLRequest}															from "awayjs-full/lib/net";
-import {RequestAnimationFrame}												from "awayjs-full/lib/utils";
+import {View}		        								from "awayjs-full/lib/view";
+import {DefaultRenderer}		        								from "awayjs-full/lib/renderer";
+import {BitmapImage2D, Sampler2D, DefaultMaterialManager}											from "awayjs-full/lib/graphics";
+import {AssetEvent, LoaderEvent, Vector3D, AssetLibrary, IAsset, LoaderContext, URLRequest, RequestAnimationFrame}											from "awayjs-full/lib/core";
+import {HoverController}													from "awayjs-full/lib/display";
+import {ElementsType, Single2DTexture}														from "awayjs-full/lib/graphics";
 import {Sprite, DirectionalLight, LoaderContainer}							from "awayjs-full/lib/display";
-import {PrimitivePlanePrefab}												from "awayjs-full/lib/prefabs";
-import {MethodMaterial, StaticLightPicker, ShadowSoftMethod}				from "awayjs-full/lib/materials";
-import {Single2DTexture}													from "awayjs-full/lib/textures";
+import {MethodMaterial, ShadowSoftMethod}				from "awayjs-full/lib/materials";
 import {Max3DSParser}														from "awayjs-full/lib/parsers";
-import {PrimitiveTorusPrefab,
+import {PrimitivePlanePrefab, StaticLightPicker, PrimitiveTorusPrefab,
 	PrimitiveSpherePrefab,
-	PrimitiveCubePrefab}													from "awayjs-full/lib/prefabs";
-import {DefaultMaterialManager}												from "awayjs-full/lib/managers";
+	PrimitiveCubePrefab}													from "awayjs-full/lib/display";
 
 class ShadowExperiment
 {
@@ -85,7 +79,7 @@ class ShadowExperiment
 	private _lastMouseX:number;
 	private _lastMouseY:number;
 
-	private _useSoftware = true;
+	private _useSoftware = false;
 	private _useShadows = true;
 	private _shadowSamples = 6; // num hard shadows
 	private _shadowRange = 50; // distribution of shadows

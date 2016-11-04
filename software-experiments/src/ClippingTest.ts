@@ -1,13 +1,14 @@
-import {Vector3D}															from "awayjs-full/lib/geom";
-import {Debug, RequestAnimationFrame}										from "awayjs-full/lib/utils";
+import {Vector3D, Debug, RequestAnimationFrame}															from "awayjs-full/lib/core";
+import {DefaultRenderer}															from "awayjs-full/lib/renderer";
 
-import {View, DefaultRenderer, MethodMaterial, BasicMaterial}				from "awayjs-full";
+import {MethodMaterial}													from "awayjs-full/lib/materials";
+import {View}				from "awayjs-full/lib/view";
 import {Sprite, DirectionalLight}											from "awayjs-full/lib/display";
-import {DefaultMaterialManager}												from "awayjs-full/lib/managers";
-import {StaticLightPicker}													from "awayjs-full/lib/materials";
+import {BasicMaterial, DefaultMaterialManager}												from "awayjs-full/lib/graphics";
+import {StaticLightPicker}													from "awayjs-full/lib/display";
 import {PrimitivePrefabBase, PrimitiveCapsulePrefab, PrimitiveConePrefab,
 	PrimitiveCubePrefab, PrimitiveCylinderPrefab, PrimitivePlanePrefab,
-	PrimitiveSpherePrefab, PrimitiveTorusPrefab, PrimitivePolygonPrefab}							from "awayjs-full/lib/prefabs";
+	PrimitiveSpherePrefab, PrimitiveTorusPrefab, PrimitivePolygonPrefab}							from "awayjs-full/lib/display";
 
 class ClippingTest
 {
