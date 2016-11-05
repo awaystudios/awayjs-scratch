@@ -40,14 +40,14 @@ import {View}		        								from "awayjs-full/lib/view";
 import {DefaultRenderer}		        								from "awayjs-full/lib/renderer";
 import {BitmapImage2D, Sampler2D, DefaultMaterialManager}											from "awayjs-full/lib/graphics";
 import {AssetEvent, LoaderEvent, Vector3D, AssetLibrary, IAsset, LoaderContext, URLRequest, RequestAnimationFrame}											from "awayjs-full/lib/core";
-import {HoverController}													from "awayjs-full/lib/display";
+import {HoverController}													from "awayjs-full/lib/scene";
 import {ElementsType, Single2DTexture}														from "awayjs-full/lib/graphics";
-import {Sprite, DirectionalLight, LoaderContainer}							from "awayjs-full/lib/display";
+import {Sprite, DirectionalLight, LoaderContainer}							from "awayjs-full/lib/scene";
 import {MethodMaterial, ShadowSoftMethod}				from "awayjs-full/lib/materials";
 import {Max3DSParser}														from "awayjs-full/lib/parsers";
 import {PrimitivePlanePrefab, StaticLightPicker, PrimitiveTorusPrefab,
 	PrimitiveSpherePrefab,
-	PrimitiveCubePrefab}													from "awayjs-full/lib/display";
+	PrimitiveCubePrefab}													from "awayjs-full/lib/scene";
 
 class ShadowExperiment
 {

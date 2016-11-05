@@ -3,11 +3,11 @@ import {DefaultRenderer}															from "awayjs-full/lib/renderer";
 import {BasicMaterial, DefaultMaterialManager}															from "awayjs-full/lib/graphics";
 
 import {View}				from "awayjs-full/lib/view";
-import {Sprite, DirectionalLight, StaticLightPicker}											from "awayjs-full/lib/display";
+import {Sprite, DirectionalLight, StaticLightPicker}											from "awayjs-full/lib/scene";
 import {MethodMaterial}													from "awayjs-full/lib/materials";
 import {PrimitivePrefabBase, PrimitiveCapsulePrefab, PrimitiveConePrefab,
 	PrimitiveCubePrefab, PrimitiveCylinderPrefab, PrimitivePlanePrefab,
-	PrimitiveSpherePrefab, PrimitiveTorusPrefab}							from "awayjs-full/lib/display";
+	PrimitiveSpherePrefab, PrimitiveTorusPrefab}							from "awayjs-full/lib/scene";
 
 class SoftwarePrimitivesTest
 {
