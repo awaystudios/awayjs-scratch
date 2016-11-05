@@ -37,17 +37,19 @@ THE SOFTWARE.
 */
 
 import {View}		        								from "awayjs-full/lib/view";
-import {DefaultRenderer}		        								from "awayjs-full/lib/renderer";
+import {DefaultRenderer, DepthRenderer}		        								from "awayjs-full/lib/renderer";
 import {BitmapImage2D, Sampler2D, DefaultMaterialManager}											from "awayjs-full/lib/graphics";
 import {AssetEvent, LoaderEvent, Vector3D, AssetLibrary, IAsset, LoaderContext, URLRequest, RequestAnimationFrame}											from "awayjs-full/lib/core";
-import {HoverController}													from "awayjs-full/lib/scene";
+import {HoverController, Billboard}													from "awayjs-full/lib/scene";
 import {ElementsType, Single2DTexture}														from "awayjs-full/lib/graphics";
 import {Sprite, DirectionalLight, LoaderContainer}							from "awayjs-full/lib/scene";
-import {MethodMaterial, ShadowSoftMethod}				from "awayjs-full/lib/materials";
+import {MethodMaterial, ShadowSoftMethod, ShadowHardMethod}				from "awayjs-full/lib/materials";
 import {Max3DSParser}														from "awayjs-full/lib/parsers";
 import {PrimitivePlanePrefab, StaticLightPicker, PrimitiveTorusPrefab,
 	PrimitiveSpherePrefab,
 	PrimitiveCubePrefab}													from "awayjs-full/lib/scene";
+import {OrientationMode} from "../node_modules/awayjs-full/dist/node_modules/@awayjs/scene/lib/base/OrientationMode";
+import {AlignmentMode} from "../node_modules/awayjs-full/dist/node_modules/@awayjs/scene/lib/base/AlignmentMode";
 
 class ShadowExperiment
 {
@@ -58,7 +60,6 @@ class ShadowExperiment
 	//material objects
 	private _groundMaterial:MethodMaterial;
 	private _objectMaterial:MethodMaterial;
-	private _shadowMapMaterial:MethodMaterial;
 
 	//light objects
 	private _light:DirectionalLight;
@@ -68,7 +69,6 @@ class ShadowExperiment
 	//scene objects
 	private _object:Sprite;
 	private _ground:Sprite;
-	private _shadowMap:Sprite;
 
 	//navigation variables
 	private _timer:RequestAnimationFrame;
@@ -81,8 +81,6 @@ class ShadowExperiment
 
 	private _useSoftware = false;
 	private _useShadows = true;
-	private _shadowSamples = 6; // num hard shadows
-	private _shadowRange = 50; // distribution of shadows
 
 	/**
 	 * Constructor
@@ -91,6 +89,10 @@ class ShadowExperiment
 	{
 		this.init();
 	}
+
+	private depthCanvas:HTMLCanvasElement;
+	private depthContext:CanvasRenderingContext2D;
+	private depthCanvasInit:Boolean = false;
 
 	/**
 	 * Global initialise function
@@ -109,7 +111,7 @@ class ShadowExperiment
 	 */
 	private initEngine():void
 	{
-		var renderer;
+		var renderer:DefaultRenderer;
 		if (this._useSoftware) {
 			renderer = new DefaultRenderer(null, false, "baseline", "software");
 		}
@@ -147,7 +149,7 @@ class ShadowExperiment
 		// OBJECT MATERIAL
 		this._objectMaterial = new MethodMaterial(DefaultMaterialManager.getDefaultImage2D());
 		if (this._useShadows) { // if commented out, ant is completely black, but still projects shadow
-			this._objectMaterial.shadowMethod = new ShadowSoftMethod(this._light , this._shadowSamples, this._shadowRange);
+			this._objectMaterial.shadowMethod = new ShadowHardMethod(this._light);
 			this._objectMaterial.shadowMethod.epsilon = 0.2;
 		}
 		this._objectMaterial.lightPicker = this._lightPicker;
@@ -158,10 +160,10 @@ class ShadowExperiment
 		this._objectMaterial.ambientMethod.strength = 1;
 
 		// GROUND MATERIAL
-		this._groundMaterial = new MethodMaterial(0xFFFFFF, 1);
+		this._groundMaterial = new MethodMaterial(0xFF0000, 1);
 		// this._groundMaterial.ambientMethod.texture = new Single2DTexture();
 		if (this._useShadows) { // if commented out, ground should not be visible
-			this._groundMaterial.shadowMethod = new ShadowSoftMethod(this._light , this._shadowSamples, this._shadowRange);
+			this._groundMaterial.shadowMethod = new ShadowHardMethod(this._light);
 			this._groundMaterial.style.sampler = new Sampler2D(true, true, true);
 			this._groundMaterial.style.addSamplerAt(new Sampler2D(true, true), this._light.shadowMapper.depthMap);
 			this._groundMaterial.shadowMethod.epsilon = 0.2;
@@ -169,14 +171,6 @@ class ShadowExperiment
 		this._groundMaterial.lightPicker = this._lightPicker;
 		this._groundMaterial.specularMethod.strength = 0;
 		//this._groundMaterial.mipmap = false;
-
-		// SHADOW MAP MATERIAL
-		this._shadowMapMaterial = new MethodMaterial();
-		this._shadowMapMaterial.bothSides = true;
-		if (this._useShadows) {
-			this._shadowMapMaterial.ambientMethod.texture = this._light.shadowMapper.depthMap;
-			// this._shadowMapMaterial.ambientMethod.texture = DefaultMaterialManager.getDefaultTexture();
-		}
 	}
 
 	/**
@@ -185,28 +179,19 @@ class ShadowExperiment
 	private initObjects():void
 	{
 		// Shadow casting object
-		var size = 150;
+		var size = 400;
 		// this._object = <Sprite> new PrimitiveTorusPrefab(this._objectMaterial, ElementsType.TRIANGLE, size, 50, 40, 20).getNewObject();
 		this._object = <Sprite> new PrimitiveSpherePrefab(this._objectMaterial, ElementsType.TRIANGLE, size, 16, 12).getNewObject();
 		// this._object = <Sprite> new PrimitiveCubePrefab(this._objectMaterial, ElementsType.TRIANGLE, size, size, size, 1, 1).getNewObject();
 		// this._object.debugVisible = true;
-		this._object.y = 250;
+		this._object.y = 300;
 		this._view.scene.addChild(this._object);
 
 		// Ground
-		var floorPlane = new PrimitivePlanePrefab(this._groundMaterial, ElementsType.TRIANGLE, 1000, 1000, 1, 1);
+		var floorPlane = new PrimitivePlanePrefab(this._groundMaterial, ElementsType.TRIANGLE, 10000, 10000, 1, 1);
 		this._ground = <Sprite> floorPlane.getNewObject();
 		this._ground.castsShadows = false;
 		this._view.scene.addChild(this._ground);
-
-		// Shadow map plane
-		var shadowPlane = new PrimitivePlanePrefab(this._shadowMapMaterial, ElementsType.TRIANGLE, 1000, 1000, 1, 1);
-		this._shadowMap = <Sprite> shadowPlane.getNewObject();
-		this._shadowMap.castsShadows = false;
-		this._shadowMap.z = -500;
-		this._shadowMap.y = 500;
-		this._shadowMap.rotationX = 90;
-		this._view.scene.addChild(this._shadowMap);
 	}
 
 	/**
@@ -239,6 +224,37 @@ class ShadowExperiment
 		this._light.direction = this._direction;
 
 		this._view.render();
+
+		// To debug depth map.
+		if (this.depthCanvasInit == false) {
+			this.depthCanvas = document.createElement("canvas");
+			this.depthCanvas.id = "depthMapCanvas";
+			this.depthCanvas.width = 2048;
+			this.depthCanvas.height = 2048;
+			this.depthCanvas.style.zoom = "0.1";
+			this.depthCanvas.style.zIndex = "8";
+			this.depthCanvas.style.position = "absolute";
+			this.depthCanvas.style.border = "1px solid";
+			this.depthContext = this.depthCanvas.getContext("2d");
+			this.depthContext.fillStyle = "rgb(255, 0, 0)";
+			this.depthContext.fillRect(0, 0, this.depthCanvas.width, this.depthCanvas.height);
+			document.body.appendChild(this.depthCanvas);
+			var self = this;
+			var defRend = this._view.renderer as DefaultRenderer;
+			var depthRenderer:DepthRenderer = defRend.getDepthRenderer();
+			depthRenderer.drawCallback = function() {
+
+				// console.log("drawing depth");
+
+				// Draw to external canvas.
+				var imageData:ImageData = self.depthContext.getImageData(0, 0, self.depthCanvas.width, self.depthCanvas.height);
+				var bitmap:BitmapImage2D = new BitmapImage2D(self.depthCanvas.width, self.depthCanvas.height, false, 0xFF0000, true);
+				bitmap.setPixels(bitmap.rect, imageData.data);
+				self._view.renderer.context.drawToBitmapImage2D(bitmap);
+				self.depthContext.putImageData(bitmap.getImageData(), 0, 0);
+			};
+			this.depthCanvasInit = true;
+		}
 	}
 
 	/**
