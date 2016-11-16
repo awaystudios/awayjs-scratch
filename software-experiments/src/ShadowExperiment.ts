@@ -43,7 +43,7 @@ import {AssetEvent, LoaderEvent, Vector3D, AssetLibrary, IAsset, LoaderContext, 
 import {HoverController, Billboard}													from "awayjs-full/lib/scene";
 import {ElementsType, Single2DTexture}														from "awayjs-full/lib/graphics";
 import {Sprite, DirectionalLight, LoaderContainer}							from "awayjs-full/lib/scene";
-import {MethodMaterial, ShadowSoftMethod, ShadowHardMethod}				from "awayjs-full/lib/materials";
+import {MethodMaterial, ShadowSoftMethod, ShadowHardMethod, DiffuseDepthMethod, AmbientBasicMethod}				from "awayjs-full/lib/materials";
 import {Max3DSParser}														from "awayjs-full/lib/parsers";
 import {PrimitivePlanePrefab, StaticLightPicker, PrimitiveTorusPrefab,
 	PrimitiveSpherePrefab,
@@ -135,7 +135,7 @@ class ShadowExperiment
 	private initLights():void
 	{
 		this._light = new DirectionalLight(-1, -1, 1);
-		this._light.castsShadows = true;
+		// this._light.castsShadows = true;
 		this._direction = new Vector3D(-1, -1, 1);
 		this._lightPicker = new StaticLightPicker([this._light]);
 		this._view.scene.addChild(this._light);
@@ -148,28 +148,32 @@ class ShadowExperiment
 	{
 		// OBJECT MATERIAL
 		this._objectMaterial = new MethodMaterial(DefaultMaterialManager.getDefaultImage2D());
-		if (this._useShadows) { // if commented out, ant is completely black, but still projects shadow
-			this._objectMaterial.shadowMethod = new ShadowHardMethod(this._light);
-			this._objectMaterial.shadowMethod.epsilon = 0.2;
-		}
+		// if (this._useShadows) { // if commented out, ant is completely black, but still projects shadow
+			// this._objectMaterial.shadowMethod = new ShadowHardMethod(this._light);
+			// this._objectMaterial.shadowMethod.epsilon = 0.2;
+		// }
 		this._objectMaterial.lightPicker = this._lightPicker;
-		this._objectMaterial.specularMethod.gloss = 30;
-		this._objectMaterial.specularMethod.strength = 1;
-		this._objectMaterial.style.color = 0x303040;
-		this._objectMaterial.diffuseMethod.multiply = false;
-		this._objectMaterial.ambientMethod.strength = 1;
+		// this._objectMaterial.specularMethod.gloss = 30;
+		// this._objectMaterial.specularMethod.strength = 1;
+		// this._objectMaterial.style.color = 0x303040;
+		// this._objectMaterial.diffuseMethod.multiply = false;
+		// this._objectMaterial.ambientMethod.strength = 1;
 
 		// GROUND MATERIAL
-		this._groundMaterial = new MethodMaterial(0xFF0000, 1);
-		// this._groundMaterial.ambientMethod.texture = new Single2DTexture();
+		this._groundMaterial = new MethodMaterial(DefaultMaterialManager.getDefaultImage2D());
 		if (this._useShadows) { // if commented out, ground should not be visible
-			this._groundMaterial.shadowMethod = new ShadowHardMethod(this._light);
-			this._groundMaterial.style.sampler = new Sampler2D(true, true, true);
-			this._groundMaterial.style.addSamplerAt(new Sampler2D(true, true), this._light.shadowMapper.depthMap);
-			this._groundMaterial.shadowMethod.epsilon = 0.2;
+
+			// this._groundMaterial.shadowMethod = new ShadowHardMethod(this._light);
+			// this._groundMaterial.style.sampler = new Sampler2D(true, true, true);
+			// this._groundMaterial.style.addSamplerAt(new Sampler2D(true, true), this._light.shadowMapper.depthMap);
+			// this._groundMaterial.shadowMethod.epsilon = 0.2;
+
+			// this._groundMaterial.ambientMethod = new AmbientBasicMethod();
+			this._groundMaterial.diffuseMethod = new DiffuseDepthMethod();
+			this._groundMaterial.diffuseMethod.texture = new Single2DTexture();
 		}
 		this._groundMaterial.lightPicker = this._lightPicker;
-		this._groundMaterial.specularMethod.strength = 0;
+		// this._groundMaterial.specularMethod.strength = 0;
 		//this._groundMaterial.mipmap = false;
 	}
 
@@ -179,7 +183,7 @@ class ShadowExperiment
 	private initObjects():void
 	{
 		// Shadow casting object
-		var size = 400;
+		var size = 200;
 		// this._object = <Sprite> new PrimitiveTorusPrefab(this._objectMaterial, ElementsType.TRIANGLE, size, 50, 40, 20).getNewObject();
 		this._object = <Sprite> new PrimitiveSpherePrefab(this._objectMaterial, ElementsType.TRIANGLE, size, 16, 12).getNewObject();
 		// this._object = <Sprite> new PrimitiveCubePrefab(this._objectMaterial, ElementsType.TRIANGLE, size, size, size, 1, 1).getNewObject();
@@ -188,8 +192,9 @@ class ShadowExperiment
 		this._view.scene.addChild(this._object);
 
 		// Ground
-		var floorPlane = new PrimitivePlanePrefab(this._groundMaterial, ElementsType.TRIANGLE, 10000, 10000, 1, 1);
+		var floorPlane = new PrimitivePlanePrefab(this._groundMaterial, ElementsType.TRIANGLE, 2000, 2000, 1, 1);
 		this._ground = <Sprite> floorPlane.getNewObject();
+		// this._ground.rotationY = 180;
 		this._ground.castsShadows = false;
 		this._view.scene.addChild(this._ground);
 	}
@@ -218,43 +223,43 @@ class ShadowExperiment
 	{
 		this._time += dt;
 
-		var sc = 0.7;
-		this._direction.x = -sc * Math.sin(this._time/4000);
-		this._direction.z = -sc * Math.cos(this._time/42000);
-		this._light.direction = this._direction;
+		// var sc = 0.7;
+		// this._direction.x = -sc * Math.sin(this._time/4000);
+		// this._direction.z = -sc * Math.cos(this._time/42000);
+		// this._light.direction = this._direction;
 
 		this._view.render();
 
 		// To debug depth map.
-		if (this.depthCanvasInit == false) {
-			this.depthCanvas = document.createElement("canvas");
-			this.depthCanvas.id = "depthMapCanvas";
-			this.depthCanvas.width = 2048;
-			this.depthCanvas.height = 2048;
-			this.depthCanvas.style.zoom = "0.1";
-			this.depthCanvas.style.zIndex = "8";
-			this.depthCanvas.style.position = "absolute";
-			this.depthCanvas.style.border = "1px solid";
-			this.depthContext = this.depthCanvas.getContext("2d");
-			this.depthContext.fillStyle = "rgb(255, 0, 0)";
-			this.depthContext.fillRect(0, 0, this.depthCanvas.width, this.depthCanvas.height);
-			document.body.appendChild(this.depthCanvas);
-			var self = this;
-			var defRend = this._view.renderer as DefaultRenderer;
-			var depthRenderer:DepthRenderer = defRend.getDepthRenderer();
-			depthRenderer.drawCallback = function() {
-
-				// console.log("drawing depth");
-
-				// Draw to external canvas.
-				var imageData:ImageData = self.depthContext.getImageData(0, 0, self.depthCanvas.width, self.depthCanvas.height);
-				var bitmap:BitmapImage2D = new BitmapImage2D(self.depthCanvas.width, self.depthCanvas.height, false, 0xFF0000, true);
-				bitmap.setPixels(bitmap.rect, imageData.data);
-				self._view.renderer.context.drawToBitmapImage2D(bitmap);
-				self.depthContext.putImageData(bitmap.getImageData(), 0, 0);
-			};
-			this.depthCanvasInit = true;
-		}
+		// if (this.depthCanvasInit == false) {
+		// 	this.depthCanvas = document.createElement("canvas");
+		// 	this.depthCanvas.id = "depthMapCanvas";
+		// 	this.depthCanvas.width = 2048;
+		// 	this.depthCanvas.height = 2048;
+		// 	this.depthCanvas.style.zoom = "0.1";
+		// 	this.depthCanvas.style.zIndex = "8";
+		// 	this.depthCanvas.style.position = "absolute";
+		// 	this.depthCanvas.style.border = "1px solid";
+		// 	this.depthContext = this.depthCanvas.getContext("2d");
+		// 	this.depthContext.fillStyle = "rgb(255, 0, 0)";
+		// 	this.depthContext.fillRect(0, 0, this.depthCanvas.width, this.depthCanvas.height);
+		// 	document.body.appendChild(this.depthCanvas);
+		// 	var self = this;
+		// 	var defRend = this._view.renderer as DefaultRenderer;
+		// 	var depthRenderer:DepthRenderer = defRend.getDepthRenderer();
+		// 	depthRenderer.drawCallback = function() {
+		//
+		// 		// console.log("drawing depth");
+		//
+		// 		// Draw to external canvas.
+		// 		var imageData:ImageData = self.depthContext.getImageData(0, 0, self.depthCanvas.width, self.depthCanvas.height);
+		// 		var bitmap:BitmapImage2D = new BitmapImage2D(self.depthCanvas.width, self.depthCanvas.height, false, 0xFF0000, true);
+		// 		bitmap.setPixels(bitmap.rect, imageData.data);
+		// 		self._view.renderer.context.drawToBitmapImage2D(bitmap);
+		// 		self.depthContext.putImageData(bitmap.getImageData(), 0, 0);
+		// 	};
+		// 	this.depthCanvasInit = true;
+		// }
 	}
 
 	/**
