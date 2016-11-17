@@ -70,8 +70,10 @@ class RasterizeTest {
 		// this._timer = new RequestAnimationFrame(this.onEnterFrame, this);
 		// this._timer.start();
 
-		this.render();
-		this.render();
+		// First render takes a bit longer, so do a few
+		// to start with a 'warmed up' engine.
+		this._view.render();
+		this._view.render();
 	}
 
 	private onMouseDown(event:MouseEvent):void  {
@@ -85,7 +87,7 @@ class RasterizeTest {
 		var startTime:number = performance.now();
 
 		for(var i:number = 0; i < numTimes; i++) {
-			this.render();
+			this._view.render();
 		}
 
 		var endTime:number = performance.now();
@@ -97,15 +99,11 @@ class RasterizeTest {
 	}
 
 	private onEnterFrame(dt:number):void  {
-		this.render();
-	}
 
-	private render():void {
-
-		// var k:number = this._useSoftware ? 10 : 1;
-		// this._object.rotationX += .1 * k;
-		// this._object.rotationY += .2 * k;
-		// this._object.rotationZ += .3 * k;
+		var k:number = this._useSoftware ? 10 : 1;
+		this._object.rotationX += .1 * k;
+		this._object.rotationY += .2 * k;
+		this._object.rotationZ += .3 * k;
 
 		this._view.render();
 	}
