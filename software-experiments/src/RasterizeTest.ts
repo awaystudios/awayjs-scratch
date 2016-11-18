@@ -6,7 +6,7 @@ import {DefaultRenderer} from "awayjs-full/lib/renderer";
 import {View} from "awayjs-full/lib/view";
 import {RequestAnimationFrame, Vector3D} from "awayjs-full/lib/core";
 import {DirectionalLight, Sprite} from "awayjs-full/lib/scene";
-import {PrimitiveTorusPrefab, StaticLightPicker} from "awayjs-full/lib/scene";
+import {PrimitiveTorusPrefab, PrimitivePlanePrefab, StaticLightPicker} from "awayjs-full/lib/scene";
 import {MethodMaterial} from "awayjs-full/lib/materials";
 import {DefaultMaterialManager} from "awayjs-full/lib/graphics";
 import {ElementsType} from "awayjs-full/lib/graphics";
@@ -16,6 +16,7 @@ class RasterizeTest {
 	private _view:View;
 	private _light:DirectionalLight;
 	private _timer:RequestAnimationFrame;
+	private _material:MethodMaterial;
 	private _object:Sprite;
 
 	private _useSoftware = true;
@@ -47,19 +48,33 @@ class RasterizeTest {
 		this._view.scene.addChild(this._light);
 
 		// Materials.
-		var material:MethodMaterial = new MethodMaterial(DefaultMaterialManager.getDefaultImage2D());
-		material.lightPicker = lightPicker;
+		this._material = new MethodMaterial(DefaultMaterialManager.getDefaultImage2D());
+		this._material.lightPicker = lightPicker;
 
 		// Geometry.
-		var segsRadial:number = 40; // major ring
-		var segsTubular:number = 40; // minor ring
-		console.log("  torus triangles: " + segsRadial * segsTubular * 2);
-		this._object = <Sprite> new PrimitiveTorusPrefab(material, ElementsType.TRIANGLE, 250, 150, segsRadial, segsTubular).getNewObject();
-		this._object.rotationX = 90;
+		this.initTorus();
+		// this.initQuad();
+	}
+
+	private initQuad() {
+		var segsHorizontal:number = 1;
+		var segsVertical:number = 1;
+		console.log("  plane triangles: " + segsHorizontal * segsVertical * 2);
+		this._object = <Sprite> new PrimitivePlanePrefab(this._material, ElementsType.TRIANGLE, 500, 500, 1, 1).getNewObject();
+		this._object.rotationX = -90;
 		this._view.scene.addChild(this._object);
 	}
 
-	private initListeners() {
+	private initTorus() {
+		var segsRadial:number = 40; // major ring
+		var segsTubular:number = 40; // minor ring
+		console.log("  torus triangles: " + segsRadial * segsTubular * 2);
+		this._object = <Sprite> new PrimitiveTorusPrefab(this._material, ElementsType.TRIANGLE, 250, 150, segsRadial, segsTubular).getNewObject();
+		this._object.rotationX = -90;
+		this._view.scene.addChild(this._object);
+	}
+
+	private initListeners():void {
 
 		document.onmousedown = (event:MouseEvent) => this.onMouseDown(event);
 		window.onresize  = (event:UIEvent) => this.onResize(event);
@@ -78,9 +93,16 @@ class RasterizeTest {
 
 	private onMouseDown(event:MouseEvent):void  {
 
-		var numTimes:number = 10;
-
 		this._light.color = Math.random() * 0xFFFFFF;
+
+		// Pick one.
+		this.nRenderBurst();
+		// this._view.render();
+	}
+
+	private nRenderBurst():void {
+
+		var numTimes:number = 10;
 
 		console.log("rendering " + numTimes + " times...");
 
