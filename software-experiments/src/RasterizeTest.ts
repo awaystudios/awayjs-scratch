@@ -8,7 +8,7 @@ import {RequestAnimationFrame, Vector3D} from "awayjs-full/lib/core";
 import {DirectionalLight, Sprite} from "awayjs-full/lib/scene";
 import {PrimitiveTorusPrefab, PrimitivePlanePrefab, StaticLightPicker} from "awayjs-full/lib/scene";
 import {MethodMaterial} from "awayjs-full/lib/materials";
-import {DefaultMaterialManager} from "awayjs-full/lib/graphics";
+import {DefaultMaterialManager, Sampler2D} from "awayjs-full/lib/graphics";
 import {ElementsType} from "awayjs-full/lib/graphics";
 
 class RasterizeTest {
@@ -50,6 +50,7 @@ class RasterizeTest {
 		// Materials.
 		this._material = new MethodMaterial(DefaultMaterialManager.getDefaultImage2D());
 		this._material.lightPicker = lightPicker;
+		// this._material.style.sampler = new Sampler2D(false, true, false); // smooth
 
 		// Geometry.
 		this.initTorus();
