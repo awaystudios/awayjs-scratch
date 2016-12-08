@@ -37,7 +37,7 @@ THE SOFTWARE.
 */
 
 import {View}		        								from "awayjs-full/lib/view";
-import {DefaultRenderer, DepthRenderer}		        								from "awayjs-full/lib/renderer";
+import {DefaultRenderer, DepthRenderer, RendererBase}		        								from "awayjs-full/lib/renderer";
 import {BitmapImage2D, Sampler2D, DefaultMaterialManager}											from "awayjs-full/lib/graphics";
 import {AssetEvent, LoaderEvent, Vector3D, AssetLibrary, IAsset, LoaderContext, URLRequest, RequestAnimationFrame}											from "awayjs-full/lib/core";
 import {HoverController, Billboard}													from "awayjs-full/lib/scene";
@@ -48,8 +48,6 @@ import {Max3DSParser}														from "awayjs-full/lib/parsers";
 import {PrimitivePlanePrefab, StaticLightPicker, PrimitiveTorusPrefab,
 	PrimitiveSpherePrefab,
 	PrimitiveCubePrefab}													from "awayjs-full/lib/scene";
-import {OrientationMode} from "../node_modules/awayjs-full/dist/node_modules/@awayjs/scene/lib/base/OrientationMode";
-import {AlignmentMode} from "../node_modules/awayjs-full/dist/node_modules/@awayjs/scene/lib/base/AlignmentMode";
 
 class ShadowExperiment
 {
@@ -79,9 +77,10 @@ class ShadowExperiment
 	private _lastMouseX:number;
 	private _lastMouseY:number;
 
-	private _useSoftware = false;
-	private _useShadows = true;
-
+	private _useSoftware:boolean = false;
+	private _useShadows:boolean = true;
+	private _depthMapSize:number = 2048;
+	private _depthMapDebug:BitmapImage2D;
 	/**
 	 * Constructor
 	 */
@@ -135,7 +134,18 @@ class ShadowExperiment
 	private initLights():void
 	{
 		this._light = new DirectionalLight(-1, -1, 1);
-		// this._light.castsShadows = true;
+		if (this._useShadows) {
+			this._light.shadowsEnabled = true;
+			this._light.shadowMapper.depthMapSize = this._depthMapSize;
+			this._depthMapDebug = new BitmapImage2D(this._depthMapSize, this._depthMapSize, false, 0xFF0000, true);
+			this.depthCanvas = this._depthMapDebug.getCanvas();
+			this.depthCanvas.id = "depthMapCanvas";
+			this.depthCanvas.style.zoom = "0.1";
+			this.depthCanvas.style.zIndex = "8";
+			this.depthCanvas.style.position = "absolute";
+			this.depthCanvas.style.border = "1px solid";
+			document.body.appendChild(this.depthCanvas);
+		}
 		this._direction = new Vector3D(-1, -1, 1);
 		this._lightPicker = new StaticLightPicker([this._light]);
 		this._view.scene.addChild(this._light);
@@ -148,10 +158,10 @@ class ShadowExperiment
 	{
 		// OBJECT MATERIAL
 		this._objectMaterial = new MethodMaterial(DefaultMaterialManager.getDefaultImage2D());
-		// if (this._useShadows) { // if commented out, ant is completely black, but still projects shadow
-			// this._objectMaterial.shadowMethod = new ShadowHardMethod(this._light);
-			// this._objectMaterial.shadowMethod.epsilon = 0.2;
-		// }
+			if (this._useShadows) { // if commented out, ant is completely black, but still projects shadow
+				this._objectMaterial.shadowMethod = new ShadowHardMethod(this._light);
+				this._objectMaterial.shadowMethod.epsilon = 0.2;
+			}
 		this._objectMaterial.lightPicker = this._lightPicker;
 		// this._objectMaterial.specularMethod.gloss = 30;
 		// this._objectMaterial.specularMethod.strength = 1;
@@ -163,13 +173,13 @@ class ShadowExperiment
 		this._groundMaterial = new MethodMaterial(DefaultMaterialManager.getDefaultImage2D());
 		if (this._useShadows) { // if commented out, ground should not be visible
 
-			// this._groundMaterial.shadowMethod = new ShadowHardMethod(this._light);
-			// this._groundMaterial.style.sampler = new Sampler2D(true, true, true);
-			// this._groundMaterial.style.addSamplerAt(new Sampler2D(true, true), this._light.shadowMapper.depthMap);
-			// this._groundMaterial.shadowMethod.epsilon = 0.2;
+			this._groundMaterial.shadowMethod = new ShadowHardMethod(this._light);
+			//this._groundMaterial.style.sampler = new Sampler2D(true, true, true);
+			//this._groundMaterial.style.addSamplerAt(new Sampler2D(true, true), this._light.shadowMapper.depthMap);
+			this._groundMaterial.shadowMethod.epsilon = 0.0015;
 
 			// this._groundMaterial.ambientMethod = new AmbientBasicMethod();
-			this._groundMaterial.diffuseMethod = new DiffuseDepthMethod();
+			//this._groundMaterial.diffuseMethod = new DiffuseDepthMethod();
 			this._groundMaterial.diffuseMethod.texture = new Single2DTexture();
 		}
 		this._groundMaterial.lightPicker = this._lightPicker;
@@ -223,43 +233,13 @@ class ShadowExperiment
 	{
 		this._time += dt;
 
-		// var sc = 0.7;
-		// this._direction.x = -sc * Math.sin(this._time/4000);
-		// this._direction.z = -sc * Math.cos(this._time/42000);
+		// this._direction.x = -1 * Math.sin(this._time/4000);
+		// this._direction.z = 1 * Math.cos(this._time/4000);
 		// this._light.direction = this._direction;
 
-		this._view.render();
+		(<DefaultRenderer> this._view.renderer).depthRenderer.queueSnapshot(this._depthMapDebug);
 
-		// To debug depth map.
-		// if (this.depthCanvasInit == false) {
-		// 	this.depthCanvas = document.createElement("canvas");
-		// 	this.depthCanvas.id = "depthMapCanvas";
-		// 	this.depthCanvas.width = 2048;
-		// 	this.depthCanvas.height = 2048;
-		// 	this.depthCanvas.style.zoom = "0.1";
-		// 	this.depthCanvas.style.zIndex = "8";
-		// 	this.depthCanvas.style.position = "absolute";
-		// 	this.depthCanvas.style.border = "1px solid";
-		// 	this.depthContext = this.depthCanvas.getContext("2d");
-		// 	this.depthContext.fillStyle = "rgb(255, 0, 0)";
-		// 	this.depthContext.fillRect(0, 0, this.depthCanvas.width, this.depthCanvas.height);
-		// 	document.body.appendChild(this.depthCanvas);
-		// 	var self = this;
-		// 	var defRend = this._view.renderer as DefaultRenderer;
-		// 	var depthRenderer:DepthRenderer = defRend.getDepthRenderer();
-		// 	depthRenderer.drawCallback = function() {
-		//
-		// 		// console.log("drawing depth");
-		//
-		// 		// Draw to external canvas.
-		// 		var imageData:ImageData = self.depthContext.getImageData(0, 0, self.depthCanvas.width, self.depthCanvas.height);
-		// 		var bitmap:BitmapImage2D = new BitmapImage2D(self.depthCanvas.width, self.depthCanvas.height, false, 0xFF0000, true);
-		// 		bitmap.setPixels(bitmap.rect, imageData.data);
-		// 		self._view.renderer.context.drawToBitmapImage2D(bitmap);
-		// 		self.depthContext.putImageData(bitmap.getImageData(), 0, 0);
-		// 	};
-		// 	this.depthCanvasInit = true;
-		// }
+		this._view.render();
 	}
 
 	/**
