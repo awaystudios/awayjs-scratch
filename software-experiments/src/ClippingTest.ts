@@ -1,14 +1,10 @@
-import {Vector3D, Debug, RequestAnimationFrame}															from "awayjs-full/lib/core";
-import {DefaultRenderer}															from "awayjs-full/lib/renderer";
-
-import {MethodMaterial}													from "awayjs-full/lib/materials";
-import {View}				from "awayjs-full/lib/view";
-import {Sprite, DirectionalLight}											from "awayjs-full/lib/scene";
-import {BasicMaterial, DefaultMaterialManager}												from "awayjs-full/lib/graphics";
-import {StaticLightPicker}													from "awayjs-full/lib/scene";
-import {PrimitivePrefabBase, PrimitiveCapsulePrefab, PrimitiveConePrefab,
-	PrimitiveCubePrefab, PrimitiveCylinderPrefab, PrimitivePlanePrefab,
-	PrimitiveSpherePrefab, PrimitiveTorusPrefab, PrimitivePolygonPrefab}							from "awayjs-full/lib/scene";
+import {RequestAnimationFrame} from "awayjs-full/lib/core";
+import {DefaultMaterialManager} from "awayjs-full/lib/graphics";
+import {Sprite, PrimitivePlanePrefab} from "awayjs-full/lib/scene";
+import {ContextGLProfile, ContextMode} from "awayjs-full/lib/stage";
+import {DefaultRenderer} from "awayjs-full/lib/renderer";
+import {View} from "awayjs-full/lib/view";
+import {MethodMaterial} from "awayjs-full/lib/materials";
 
 class ClippingTest
 {
@@ -23,7 +19,7 @@ class ClippingTest
 		console.log("ClippingTest - constructor()")
 
 		// RENDERER.
-		var renderer:DefaultRenderer = new DefaultRenderer(null, false, "baseline", "software");
+		var renderer:DefaultRenderer = new DefaultRenderer(null, false, ContextGLProfile.BASELINE, ContextMode.SOFTWARE);
 		// var renderer:DefaultRenderer = new DefaultRenderer();
 		this.view = new View(renderer);
 		this.view.backgroundColor = 0x666666;

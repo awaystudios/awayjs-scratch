@@ -36,18 +36,13 @@ THE SOFTWARE.
 
 */
 
-import {View}		        								from "awayjs-full/lib/view";
-import {DefaultRenderer, DepthRenderer, RendererBase}		        								from "awayjs-full/lib/renderer";
-import {BitmapImage2D, Sampler2D, DefaultMaterialManager}											from "awayjs-full/lib/graphics";
-import {AssetEvent, LoaderEvent, Vector3D, AssetLibrary, IAsset, LoaderContext, URLRequest, RequestAnimationFrame}											from "awayjs-full/lib/core";
-import {HoverController, Billboard}													from "awayjs-full/lib/scene";
-import {ElementsType, Single2DTexture}														from "awayjs-full/lib/graphics";
-import {Sprite, DirectionalLight, LoaderContainer}							from "awayjs-full/lib/scene";
-import {MethodMaterial, ShadowSoftMethod, ShadowHardMethod, DiffuseDepthMethod, AmbientBasicMethod}				from "awayjs-full/lib/materials";
-import {Max3DSParser}														from "awayjs-full/lib/parsers";
-import {PrimitivePlanePrefab, StaticLightPicker, PrimitiveTorusPrefab,
-	PrimitiveSpherePrefab,
-	PrimitiveCubePrefab}													from "awayjs-full/lib/scene";
+import {AssetEvent, LoaderEvent, Vector3D, AssetLibrary, IAsset, LoaderContext, URLRequest, RequestAnimationFrame} from "awayjs-full/lib/core";
+import {ElementsType, Single2DTexture, BitmapImage2D, Sampler2D, DefaultMaterialManager} from "awayjs-full/lib/graphics";
+import {ContextGLProfile, ContextMode} from "awayjs-full/lib/stage";
+import {HoverController, Sprite, DirectionalLight, PrimitivePlanePrefab, StaticLightPicker, PrimitiveSpherePrefab} from "awayjs-full/lib/scene";
+import {DefaultRenderer, DepthRenderer, RendererBase} from "awayjs-full/lib/renderer";
+import {View} from "awayjs-full/lib/view";
+import {MethodMaterial, ShadowSoftMethod, ShadowHardMethod, DiffuseDepthMethod, AmbientBasicMethod} from "awayjs-full/lib/materials";
 
 class ShadowExperiment
 {
@@ -77,7 +72,7 @@ class ShadowExperiment
 	private _lastMouseX:number;
 	private _lastMouseY:number;
 
-	private _useSoftware:boolean = false;
+	private _useSoftware:boolean = true;
 	private _useShadows:boolean = true;
 	private _depthMapSize:number = 2048;
 	private _depthMapDebug:BitmapImage2D;
@@ -112,7 +107,7 @@ class ShadowExperiment
 	{
 		var renderer:DefaultRenderer;
 		if (this._useSoftware) {
-			renderer = new DefaultRenderer(null, false, "baseline", "software");
+			renderer = new DefaultRenderer(null, false, ContextGLProfile.BASELINE, ContextMode.SOFTWARE);
 		}
 		else {
 			renderer = new DefaultRenderer();

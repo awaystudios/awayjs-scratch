@@ -35,17 +35,13 @@ THE SOFTWARE.
 
 */
 
-import {View}		        								from "awayjs-full/lib/view";
-import {DefaultRenderer}		        								from "awayjs-full/lib/renderer";
-import {BitmapImageCube, SamplerCube}										from "awayjs-full/lib/graphics";
-import {LoaderEvent, Vector3D, AssetLibrary, LoaderContext, URLRequest, RequestAnimationFrame, PerspectiveProjection}														from "awayjs-full/lib/core";
-import {ElementsType}														from "awayjs-full/lib/graphics";
-import {Sprite, Skybox}														from "awayjs-full/lib/scene";
-import {PrimitiveTorusPrefab,
-	PrimitiveSpherePrefab,
-	PrimitiveCubePrefab}												    from "awayjs-full/lib/scene";
-import {MethodMaterial, EffectEnvMapMethod}									from "awayjs-full/lib/materials";
-import {Single2DTexture, SingleCubeTexture}									from "awayjs-full/lib/graphics";
+import {LoaderEvent, Vector3D, AssetLibrary, LoaderContext, URLRequest, RequestAnimationFrame, PerspectiveProjection} from "awayjs-full/lib/core";
+import {ElementsType, BitmapImageCube, SamplerCube, SingleCubeTexture} from "awayjs-full/lib/graphics";
+import {Sprite, Skybox, PrimitiveTorusPrefab} from "awayjs-full/lib/scene";
+import {ContextGLProfile, ContextMode} from "awayjs-full/lib/stage";
+import {DefaultRenderer} from "awayjs-full/lib/renderer";
+import {View} from "awayjs-full/lib/view";
+import {MethodMaterial, EffectEnvMapMethod} from "awayjs-full/lib/materials";
 
 class Basic_SkyBox
 {
@@ -96,7 +92,7 @@ class Basic_SkyBox
 		//setup the view
 		var renderer;
 		if (this._useSoftware) {
-			renderer = new DefaultRenderer(null, false, "baseline", "software");
+			renderer = new DefaultRenderer(null, false, ContextGLProfile.BASELINE, ContextMode.SOFTWARE);
 		}
 		else {
 			renderer = new DefaultRenderer();

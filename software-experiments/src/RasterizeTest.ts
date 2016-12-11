@@ -2,14 +2,13 @@
  * Created by palebluedot on 11/16/16.
  */
 
+import {RequestAnimationFrame, Vector3D} from "awayjs-full/lib/core";
+import {DefaultMaterialManager, ElementsType} from "awayjs-full/lib/graphics";
+import {ContextGLProfile, ContextMode} from "awayjs-full/lib/stage";
+import {DirectionalLight, Sprite, PrimitiveTorusPrefab, PrimitivePlanePrefab, StaticLightPicker} from "awayjs-full/lib/scene";
 import {DefaultRenderer} from "awayjs-full/lib/renderer";
 import {View} from "awayjs-full/lib/view";
-import {RequestAnimationFrame, Vector3D} from "awayjs-full/lib/core";
-import {DirectionalLight, Sprite} from "awayjs-full/lib/scene";
-import {PrimitiveTorusPrefab, PrimitivePlanePrefab, StaticLightPicker} from "awayjs-full/lib/scene";
 import {MethodMaterial} from "awayjs-full/lib/materials";
-import {DefaultMaterialManager, Sampler2D} from "awayjs-full/lib/graphics";
-import {ElementsType} from "awayjs-full/lib/graphics";
 
 class RasterizeTest {
 
@@ -34,7 +33,7 @@ class RasterizeTest {
 		// View.
 		var renderer:DefaultRenderer;
 		if (this._useSoftware) {
-			renderer = new DefaultRenderer(null, false, "baseline", "software");
+			renderer = new DefaultRenderer(null, false, ContextGLProfile.BASELINE, ContextMode.SOFTWARE);
 		}
 		else {
 			renderer = new DefaultRenderer();

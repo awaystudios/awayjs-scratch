@@ -1,13 +1,10 @@
-import {Vector3D, Debug, RequestAnimationFrame}															from "awayjs-full/lib/core";
-import {DefaultRenderer}															from "awayjs-full/lib/renderer";
-import {BasicMaterial, DefaultMaterialManager}															from "awayjs-full/lib/graphics";
-
-import {View}				from "awayjs-full/lib/view";
-import {Sprite, DirectionalLight, StaticLightPicker}											from "awayjs-full/lib/scene";
-import {MethodMaterial}													from "awayjs-full/lib/materials";
-import {PrimitivePrefabBase, PrimitiveCapsulePrefab, PrimitiveConePrefab,
-	PrimitiveCubePrefab, PrimitiveCylinderPrefab, PrimitivePlanePrefab,
-	PrimitiveSpherePrefab, PrimitiveTorusPrefab}							from "awayjs-full/lib/scene";
+import {Vector3D, Debug, RequestAnimationFrame} from "awayjs-full/lib/core";
+import {BasicMaterial, DefaultMaterialManager} from "awayjs-full/lib/graphics";
+import {ContextGLProfile, ContextMode} from "awayjs-full/lib/stage";
+import {Sprite, DirectionalLight, StaticLightPicker, PrimitivePrefabBase, PrimitiveCapsulePrefab, PrimitiveConePrefab, PrimitiveCubePrefab, PrimitiveCylinderPrefab, PrimitivePlanePrefab, PrimitiveSpherePrefab, PrimitiveTorusPrefab} from "awayjs-full/lib/scene";
+import {DefaultRenderer} from "awayjs-full/lib/renderer";
+import {View} from "awayjs-full/lib/view";
+import {MethodMaterial} from "awayjs-full/lib/materials";
 
 class SoftwarePrimitivesTest
 {
@@ -27,7 +24,7 @@ class SoftwarePrimitivesTest
 		Debug.LOG_PI_ERRORS    = false;
 		Debug.THROW_ERRORS     = false;
 
-		var defaultRenderer:DefaultRenderer = new DefaultRenderer(null, false, "baseline", "software");
+		var defaultRenderer:DefaultRenderer = new DefaultRenderer(null, false, ContextGLProfile.BASELINE, ContextMode.SOFTWARE);
 		// var defaultRenderer:DefaultRenderer = new DefaultRenderer();
 		defaultRenderer.antiAlias = 1;
 
