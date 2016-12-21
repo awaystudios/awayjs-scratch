@@ -92,8 +92,8 @@ class TransparencyTest {
 
 		// Animation.
 		// <><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><>
-		this._timer = new RequestAnimationFrame(this.onEnterFrame, this);
-		this._timer.start();
+		// this._timer = new RequestAnimationFrame(this.onEnterFrame, this);
+		// this._timer.start();
 		// <><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><>
 
 		// First render takes a bit longer, so do a few
