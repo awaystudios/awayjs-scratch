@@ -3,7 +3,7 @@
  */
 
 import {RequestAnimationFrame, Vector3D} from "awayjs-full/lib/core";
-import {DefaultMaterialManager, ElementsType} from "awayjs-full/lib/graphics";
+import {DefaultMaterialManager, ElementsType, BitmapImage2D} from "awayjs-full/lib/graphics";
 import {ContextGLProfile, ContextMode} from "awayjs-full/lib/stage";
 import {DirectionalLight, Sprite, PrimitiveTorusPrefab, PrimitivePlanePrefab, StaticLightPicker} from "awayjs-full/lib/scene";
 import {DefaultRenderer} from "awayjs-full/lib/renderer";
@@ -17,6 +17,7 @@ class TransparencyTest {
 	private _timer:RequestAnimationFrame;
 	private _material:MethodMaterial;
 	private _object:Sprite;
+	private _object1:Sprite;
 
 	private _useSoftware = true;
 
@@ -39,7 +40,7 @@ class TransparencyTest {
 			renderer = new DefaultRenderer();
 		}
 		this._view = new View(renderer);
-		this._view.backgroundColor = 0x666666;
+		this._view.backgroundColor = 0x0000FF;
 
 		// Lights.
 		this._light = new DirectionalLight(-1, -1, 1);
@@ -48,30 +49,38 @@ class TransparencyTest {
 
 		// Materials.
 		this._material = new MethodMaterial(DefaultMaterialManager.getDefaultImage2D());
-		this._material.lightPicker = lightPicker;
+		this._material.bothSides = true;
+		this._material.alpha = 0.25;
+		// this._material.lightPicker = lightPicker;
 		// this._material.style.sampler = new Sampler2D(false, true, false); // smooth
 
 		// Geometry.
-		this.initTorus();
-		// this.initQuad();
+		this.initObjs();
 	}
 
-	private initQuad() {
+	private initObjs() {
+
 		var segsHorizontal:number = 1;
 		var segsVertical:number = 1;
-		console.log("  plane triangles: " + segsHorizontal * segsVertical * 2);
-		this._object = <Sprite> new PrimitivePlanePrefab(this._material, ElementsType.TRIANGLE, 500, 500, 1, 1).getNewObject();
-		this._object.rotationX = -90;
-		this._view.scene.addChild(this._object);
-	}
 
-	private initTorus() {
-		var segsRadial:number = 40; // major ring
-		var segsTubular:number = 40; // minor ring
-		console.log("  torus triangles: " + segsRadial * segsTubular * 2);
-		this._object = <Sprite> new PrimitiveTorusPrefab(this._material, ElementsType.TRIANGLE, 250, 150, segsRadial, segsTubular).getNewObject();
+		console.log("  plane triangles: " + segsHorizontal * segsVertical * 2);
+
+		// Front plane.
+		this._object = <Sprite> new PrimitivePlanePrefab(this._material, ElementsType.TRIANGLE, 1000, 1000, 1, 1).getNewObject();
 		this._object.rotationX = -90;
+		this._object.x = 0;
+		this._object.y = 0;
+		this._object.z = 0;
 		this._view.scene.addChild(this._object);
+
+		// Back plane.
+		this._object1 = <Sprite> new PrimitivePlanePrefab(this._material, ElementsType.TRIANGLE, 1000, 1000, 1, 1).getNewObject();
+		this._object1.x = 500;
+		this._object1.y = -500;
+		this._object1.z = 1000;
+		this._object1.rotationX = -90;
+		this._object1.rotationZ = 45;
+		this._view.scene.addChild(this._object1);
 	}
 
 	private initListeners():void {
@@ -82,8 +91,10 @@ class TransparencyTest {
 		this.onResize();
 
 		// Animation.
-		// this._timer = new RequestAnimationFrame(this.onEnterFrame, this);
-		// this._timer.start();
+		// <><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><>
+		this._timer = new RequestAnimationFrame(this.onEnterFrame, this);
+		this._timer.start();
+		// <><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><>
 
 		// First render takes a bit longer, so do a few
 		// to start with a 'warmed up' engine.
@@ -102,7 +113,7 @@ class TransparencyTest {
 
 	private nRenderBurst():void {
 
-		var numTimes:number = 10;
+		var numTimes:number = 1;
 
 		console.log("rendering " + numTimes + " times...");
 
@@ -123,9 +134,12 @@ class TransparencyTest {
 	private onEnterFrame(dt:number):void  {
 
 		var k:number = this._useSoftware ? 10 : 1;
-		this._object.rotationX += .1 * k;
-		this._object.rotationY += .2 * k;
-		this._object.rotationZ += .3 * k;
+		this._object.rotationX -= .1 * k;
+		this._object.rotationY -= .2 * k;
+		this._object.rotationZ -= .3 * k;
+		this._object1.rotationX -= .3 * k;
+		this._object1.rotationY -= .2 * k;
+		this._object1.rotationZ -= .1 * k;
 
 		this._view.render();
 	}
