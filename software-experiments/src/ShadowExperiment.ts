@@ -42,7 +42,7 @@ import {ContextGLProfile, ContextMode} from "awayjs-full/lib/stage";
 import {HoverController, Sprite, DirectionalLight, PrimitivePlanePrefab, StaticLightPicker, PrimitiveSpherePrefab} from "awayjs-full/lib/scene";
 import {DefaultRenderer, DepthRenderer, RendererBase} from "awayjs-full/lib/renderer";
 import {View} from "awayjs-full/lib/view";
-import {MethodMaterial, ShadowSoftMethod, ShadowHardMethod, DiffuseDepthMethod, AmbientBasicMethod} from "awayjs-full/lib/materials";
+import {MethodMaterial, ShadowSoftMethod, ShadowHardMethod, AmbientDepthMethod, AmbientBasicMethod} from "awayjs-full/lib/materials";
 
 class ShadowExperiment
 {
@@ -174,8 +174,8 @@ class ShadowExperiment
 			this._groundMaterial.shadowMethod.epsilon = 0.0015;
 
 			// this._groundMaterial.ambientMethod = new AmbientBasicMethod();
-			//this._groundMaterial.diffuseMethod = new DiffuseDepthMethod();
-			this._groundMaterial.diffuseMethod.texture = new Single2DTexture();
+			//this._groundMaterial.ambientMethod = new AmbientDepthMethod();
+			this._groundMaterial.ambientMethod.texture = new Single2DTexture();
 		}
 		this._groundMaterial.lightPicker = this._lightPicker;
 		// this._groundMaterial.specularMethod.strength = 0;
